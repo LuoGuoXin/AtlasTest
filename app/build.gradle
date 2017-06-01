@@ -1,0 +1,103 @@
+// 需要放最上面初始化
+group = "mmc.atlastest"
+version = getEnvValue("versionName", "1.0.0");
+def apVersion = getEnvValue("apVersion", "");
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.taobao.atlas'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "mmc.atlastest"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName version
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    testCompile 'junit:junit:4.12'
+    //atlas的依赖
+    compile('com.taobao.android:atlas_core:5.0.7@aar') {
+        transitive = true
+    }
+    compile 'com.taobao.android:atlasupdate:1.1.4.7@aar'
+    compile 'com.alibaba:fastjson:1.1.45.android@jar'
+
+    //项目依赖
+    compile project(':librarybundle')
+    compile project(':localbundle')
+    compile project(':remotebundle')
+}
+
+//加入以下配置
+atlas {
+    atlasEnabled true
+    tBuildConfig {
+        // autoStartBundles = ['com.android.homebundle'] //自启动bundle配置
+        outOfApkBundles = ['remotebundle'] //远程module，列表来的，可填多个
+        preLaunch = 'mmc.atlastest.AtlasLaunch' //AppApplication启动之前调用
+    }
+    patchConfigs {
+        debug {
+            createTPatch true
+        }
+    }
+    buildTypes {
+        debug {
+            if (apVersion) {
+                // 打差异补丁 gradlew assembleDebug -DapVersion=1.1.0 -DversionName=1.1.1
+                // 对应着本地maven仓库地址 .m2/repository/mmc/atlastest/AP-debug/1.1.4/AP-debug-1.1.4.ap
+                baseApDependency "mmc.atlastest:AP-debug:${apVersion}@ap"
+                patchConfig patchConfigs.debug
+            }
+        }
+    }
+}
+
+String getEnvValue(key, defValue) {
+    def val = System.getProperty(key);
+    if (null != val) {
+        return val;
+    }
+    val = System.getenv(key);
+    if (null != val) {
+        return val;
+    }
+    return defValue;
+}
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+publishing {
+    // 指定仓库位置
+    repositories {
+        mavenLocal()
+    }
+    publications {
+        // 默认本地仓库地址  用户目录/.m2/repository/
+        maven(MavenPublication) {
+            //读取ap目录上传maven
+            artifact "${project.buildDir}/outputs/apk/${project.name}-debug.ap"
+            //生成本地maven目录
+            groupId group
+            artifactId "AP-debug"
+        }
+    }
+}

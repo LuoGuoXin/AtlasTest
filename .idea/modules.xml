@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AtlasTest.iml" filepath="$PROJECT_DIR$/AtlasTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/librarybundle/librarybundle.iml" filepath="$PROJECT_DIR$/librarybundle/librarybundle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/localbundle/localbundle.iml" filepath="$PROJECT_DIR$/localbundle/localbundle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/remotebundle/remotebundle.iml" filepath="$PROJECT_DIR$/remotebundle/remotebundle.iml" />
+    </modules>
+  </component>
+</project>

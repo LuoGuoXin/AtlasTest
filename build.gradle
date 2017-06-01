@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()//本地maven
+    }
+
+    //引入啊里的依赖，不需要再依赖classpath "com.android.tools.build:gradle"的版本，默认使用的是 2.1
+    dependencies {
+        classpath "com.taobao.android:atlasplugin:2.3.1.rc9"
+    }
+
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenLocal()//本地maven
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
